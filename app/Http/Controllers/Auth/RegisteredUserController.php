@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\ShoppingList;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
@@ -30,6 +31,12 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+        ]);
+
+        // Create a shopping list for the user with a personalized name
+        $shoppingList = ShoppingList::create([
+            'name' => "{$user->name}'s Shopping List",
+            'user_id' => $user->id,
         ]);
 
         event(new Registered($user));

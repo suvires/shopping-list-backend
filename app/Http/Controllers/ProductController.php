@@ -2,63 +2,50 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    // List all products for the authenticated user
     public function index()
     {
-        //
+        return auth()->user()->products;
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
+    // Create a new product
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:50',
+            'shopping_list_id' => 'required|exists:shopping_lists,id',
+        ]);
+
+        $product = auth()->user()->products()->create($request->all());
+        return response()->json($product, 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    // Display a specific product
+    public function show(Product $product)
     {
-        //
+        return $product;
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    // Update a specific product
+    public function update(Request $request, Product $product)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:255',
+        ]);
+
+        $product->update($request->all());
+        return $product;
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    // Delete a specific product
+    public function destroy(Product $product)
     {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        $product->delete();
+        return response()->json(null, 204);
     }
 }
