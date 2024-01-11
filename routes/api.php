@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PantryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ShoppingListController;
 use Illuminate\Http\Request;
@@ -15,20 +16,27 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-Route::middleware(['auth:sanctum'])->group(function () {
+//Route::middleware(['auth:sanctum'])->group(function () {
+Route::group([], function () {
+    // Routes for Pantry
+    Route::get('/pantry/{product}', [PantryController::class, 'returnProductToShopingList']);
+    Route::get('/pantry', [PantryController::class, 'index']);
+
+    // Routes for Products
+    Route::get('/shopping-lists/{shoppingList}/products/stash', [ProductController::class, 'stash']);
+    Route::get('/shopping-lists/{shoppingList}/products/{product}', [ProductController::class, 'show']);
+    Route::get('/shopping-lists/{shoppingList}/products/', [ProductController::class, 'index']);
+    Route::get('/shopping-lists/{shoppingList}/products/{product}', [ProductController::class, 'show']);
+    Route::post('/shopping-lists/{shoppingList}/products/', [ProductController::class, 'store']);
+    Route::put('/shopping-lists/{shoppingList}/products/{product}', [ProductController::class, 'update']);
+    Route::delete('/shopping-lists/{shoppingList}/products/{product}', [ProductController::class, 'destroy']);
+
     // Routes for Shopping Lists
-    Route::get('/shopping-lists', [ShoppingListController::class, 'index']);
-    Route::post('/shopping-lists', [ShoppingListController::class, 'store']);
     Route::get('/shopping-lists/{shoppingList}', [ShoppingListController::class, 'show']);
     Route::put('/shopping-lists/{shoppingList}', [ShoppingListController::class, 'update']);
     Route::delete('/shopping-lists/{shoppingList}', [ShoppingListController::class, 'destroy']);
-
-    // Routes for Products
-    Route::get('/products', [ProductController::class, 'index']);
-    Route::post('/products', [ProductController::class, 'store']);
-    Route::get('/products/{product}', [ProductController::class, 'show']);
-    Route::put('/products/{product}', [ProductController::class, 'update']);
-    Route::delete('/products/{product}', [ProductController::class, 'destroy']);
+    Route::get('/shopping-lists', [ShoppingListController::class, 'index']);
+    Route::post('/shopping-lists', [ShoppingListController::class, 'store']);
 });
 
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
