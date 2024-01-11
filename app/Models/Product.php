@@ -18,7 +18,7 @@ class Product extends Model
 
     protected $attributes = [
         'status' => 0,
-        'stock' => 1,
+        'stock' => 0,
     ];
 
     protected $hidden = ['created_at', 'updated_at'];
