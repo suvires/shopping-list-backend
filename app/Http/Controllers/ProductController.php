@@ -40,6 +40,7 @@ class ProductController extends Controller
 
         $request->validate([
             'name' => 'required|string|max:255',
+            'default_stock' => 'required|integer',
         ]);
 
         //Get the shopping list id
@@ -48,6 +49,7 @@ class ProductController extends Controller
         // Create the product
         $product = $shoppingList->products()->create([
             'name' => $request->input('name'),
+            'default_stock' => $request->input('default_stock'),
             'shopping_list_id' => $shopping_list_id,
         ]);
 
@@ -151,8 +153,17 @@ class ProductController extends Controller
             return response()->json(['error' => 'Shopping list not found for the user'], 404);
         }
 
-        $shoppingList->products()->where('status', 1)->update(['status' => 2]);
+        $products = $shoppingList->products()->where('status', 1)->get();
 
-        return response()->json('Products stashed', 200);
+        // Actualizar cada producto
+        foreach ($products as $product) {
+            $newStock = $product->stock + $product->default_stock;
+            $product->update([
+                'status' => 2,
+                'stock' => $newStock
+            ]);
+        }
+
+        return response()->json('Products stashed', 201);
     }
 }

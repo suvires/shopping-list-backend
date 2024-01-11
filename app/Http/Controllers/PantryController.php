@@ -20,12 +20,18 @@ class PantryController extends Controller
     // List all shopping lists for the authenticated user
     public function index()
     {
-        $products = $this->user->products()->where('status', 2)->get();
+        $products = $this->user->products()
+                    ->where(function ($query) {
+                        $query->where('status', 2)
+                            ->orWhere('stock', '>', 0);
+                    })
+                    ->get();
+
         $formattedProducts = ProductResource::collection($products);
         return response()->json($formattedProducts->response()->getData(), 200);
     }
 
-    public function returnProductToShopingList(Product $product)
+    public function returnToShopingList(Product $product)
     {
         // Ensure the product belongs to the authenticated user
         if (!$this->user->products->contains($product)) {
@@ -37,6 +43,25 @@ class PantryController extends Controller
 
         $formattedProduct = new ProductResource($product);
 
-        return response()->json($formattedProduct->response()->getData(), 200);
+        return response()->json($formattedProduct->response()->getData(), 201);
+    }
+
+    public function updateStock(Request $request, Product $product)
+    {
+        // Ensure the product belongs to the authenticated user
+        if (!$this->user->products->contains($product)) {
+            return response()->json(['error' => 'Product not found for the user'], 404);
+        }
+
+        $request->validate([
+            'quantity' => 'required|integer',
+        ]);
+
+        $product->stock += $request->input('quantity');
+        $product->save();
+
+        $formattedProduct = new ProductResource($product);
+
+        return response()->json($formattedProduct->response()->getData(), 201);
     }
 }

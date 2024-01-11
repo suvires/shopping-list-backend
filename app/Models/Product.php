@@ -11,6 +11,14 @@ class Product extends Model
 
     protected $fillable = [
         'name',
+        'status',
+        'stock',
+        'default_stock',
+    ];
+
+    protected $attributes = [
+        'status' => 0,
+        'stock' => 1,
     ];
 
     protected $hidden = ['created_at', 'updated_at'];

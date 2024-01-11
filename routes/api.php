@@ -19,7 +19,8 @@ use Illuminate\Support\Facades\Route;
 //Route::middleware(['auth:sanctum'])->group(function () {
 Route::group([], function () {
     // Routes for Pantry
-    Route::get('/pantry/{product}', [PantryController::class, 'returnProductToShopingList']);
+    Route::put('/pantry/update-stock/{product}', [PantryController::class, 'updateStock']);
+    Route::get('/pantry/return-to-shopping-list/{product}', [PantryController::class, 'returnToShopingList']);
     Route::get('/pantry', [PantryController::class, 'index']);
 
     // Routes for Products

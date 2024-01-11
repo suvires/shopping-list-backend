@@ -16,6 +16,8 @@ return new class extends Migration
             $table->foreignId('shopping_list_id')->constrained()->onDelete('cascade');
             $table->string('name');
             $table->tinyInteger('status')->default(0);
+            $table->tinyInteger('default_stock')->default(1);
+            $table->tinyInteger('stock')->default(0);
             $table->timestamps();
         });
     }
