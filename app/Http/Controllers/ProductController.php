@@ -97,9 +97,11 @@ class ProductController extends Controller
             }
         }
 
-        $rules = [
-            'name' => 'required|string|max:255',
-        ];
+        $rules = [];
+
+        if ($request->has('name')) {
+            $rules['name'] = 'required|string|max:255';
+        }
 
         if ($request->has('shopping_list_id')) {
             $rules['shopping_list_id'] = 'required|integer|exists:shopping_lists,id';
@@ -109,18 +111,28 @@ class ProductController extends Controller
             $rules['status'] = 'required|integer';
         }
 
+        if ($request->has('default_stock')) {
+            $rules['default_stock'] = 'required|integer';
+        }
+
         $validator = \Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422); // 422 Unprocessable Entity
         }
 
-        $product->name = $request->input('name');
+        if ($request->has('name')) {
+            $product->name = $request->input('name');
+        }
+
         if ($request->has('shopping_list_id')) {
             $product->shopping_list_id = $request->input('shopping_list_id');
         }
         if ($request->has('status')) {
             $product->status = $request->input('status');
+        }
+        if ($request->has('default_stock')) {
+            $product->default_stock = $request->input('default_stock');
         }
         $product->save();
 
